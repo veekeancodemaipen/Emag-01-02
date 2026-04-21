@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EM Fields — Interactive Study Notes | 2102221</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          brand: { 50:'#fff1f1',100:'#ffdede',400:'#ef4444',500:'#dc2626',600:'#b91c1c',700:'#991b1b' },
+          ink:   { 900:'#0b1020',800:'#111731',700:'#161d3d',600:'#1d2550',500:'#273069' }
+        },
+        fontFamily: { sans:['Inter','ui-sans-serif','system-ui'], mono:['JetBrains Mono','ui-monospace'] }
+      }
+    }
+  }
+</script>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    svg: { fontCache: 'global', scale: 1.15 },
+    options: { renderActions: { addMenu: [] } }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  html { scroll-behavior: smooth; font-size: 17px; }
+  @media (min-width: 768px){ html { font-size: 18px; } }
+  body {
+    background: radial-gradient(1200px 600px at 10% -10%, #1a2350 0%, transparent 60%),
+                radial-gradient(1000px 500px at 110% 10%, #2a1147 0%, transparent 55%),
+                #07091a;
+    line-height: 1.7;
+  }
+  .card { background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); backdrop-filter: blur(6px); }
+  .card:hover { border-color: rgba(239,68,68,0.35); }
+  .eq-box {
+    background: linear-gradient(135deg, rgba(220,38,38,0.08), rgba(59,130,246,0.08));
+    border-left: 4px solid #ef4444;
+  }
+  .key-eq {
+    background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(245,158,11,0.10));
+    border: 2px solid rgba(239,68,68,0.45);
+    box-shadow: 0 0 30px rgba(239,68,68,0.18), inset 0 0 20px rgba(239,68,68,0.05);
+    border-radius: 14px;
+    padding: 1.5rem;
+    position: relative;
+  }
+  .key-eq::before {
+    content: "⭐ KEY EQUATION";
+    position: absolute;
+    top: -0.75rem; left: 1rem;
+    background: #ef4444; color: white;
+    font-size: 0.72rem; font-weight: 700;
+    padding: 0.2rem 0.7rem; border-radius: 9999px;
+    letter-spacing: 0.05em;
+  }
+  .chip { background: rgba(239,68,68,0.12); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
+  .chip-b { background: rgba(59,130,246,0.12); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); }
+  .chip-g { background: rgba(34,197,94,0.12); color:#86efac; border:1px solid rgba(34,197,94,0.3); }
+  .chip-y { background: rgba(245,158,11,0.12); color:#fcd34d; border:1px solid rgba(245,158,11,0.3); }
+  .nav-link.active { background: rgba(239,68,68,0.15); color:#fecaca; border-left: 3px solid #ef4444; }
+  .nav-link { border-left: 3px solid transparent; transition: all .2s; }
+  .nav-link:hover { background: rgba(255,255,255,0.05); }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(90deg); }
+  .chev { transition: transform .25s; }
+  .glow { text-shadow: 0 0 18px rgba(239,68,68,0.35); }
+
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 0.9rem; vertical-align: top; }
+  th { background: rgba(255,255,255,0.05); text-align: left; font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* Variable table styling */
+  .var-table { font-size: 0.95rem; }
+  .var-table td:first-child { color: #fca5a5; font-weight: 600; white-space: nowrap; width: 25%; }
+  .var-table td:nth-child(2) { color: #fcd34d; white-space: nowrap; width: 20%; }
+
+  ::-webkit-scrollbar { width: 10px; height:10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 6px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  .gradient-text {
+    background: linear-gradient(90deg,#ef4444,#f59e0b,#3b82f6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  input[type=range] { accent-color:#ef4444; }
+  .quiz-opt:hover { background: rgba(255,255,255,0.05); }
+  .correct { background: rgba(34,197,94,0.15) !important; border-color: #22c55e !important; }
+  .wrong   { background: rgba(239,68,68,0.15) !important; border-color: #ef4444 !important; }
+
+  /* readable section prose */
+  .prose-lg p { font-size: 1.05rem; }
+  .prose-lg li { font-size: 1.05rem; }
+
+  h1 { letter-spacing: -0.02em; }
+  h2 { letter-spacing: -0.01em; }
+
+  .var-badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.25rem;
+    background: rgba(239,68,68,0.15);
+    color: #fca5a5;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+</style>
+</head>
+<body class="dark text-slate-200 antialiased">
+
+<!-- Top bar (mobile) -->
+<header class="md:hidden sticky top-0 z-40 bg-ink-900/90 backdrop-blur border-b border-white/10 px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-amber-500 grid place-items-center text-white font-black">ξ</div>
+    <span class="font-bold">EM Fields</span>
+  </div>
+  <button id="menuBtn" class="p-2 rounded-lg bg-white/5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+</header>
+
+<div class="flex">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="hidden md:flex fixed md:sticky top-0 md:top-0 left-0 z-30 h-screen w-72 flex-col bg-ink-900/80 backdrop-blur border-r border-white/10 overflow-y-auto">
+    <div class="p-5 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-amber-500 grid place-items-center text-white font-black text-xl">ξ</div>
+        <div>
+          <div class="text-xs text-slate-400">2102221 · CHULA</div>
+          <div class="font-bold leading-tight">Engineering<br>Electromagnetics</div>
+        </div>
+      </div>
+    </div>
+    <nav class="p-3 text-base space-y-1">
+      <div class="px-3 pt-3 pb-1 text-xs uppercase tracking-wider text-slate-500">Lecture 1 · Maxwell</div>
+      <a href="#overview"    class="nav-link block px-3 py-2 rounded">Overview</a>
+      <a href="#variables"   class="nav-link block px-3 py-2 rounded">📖 Variable Glossary</a>
+      <a href="#recap"       class="nav-link block px-3 py-2 rounded">Field Recap</a>
+      <a href="#maxwell"     class="nav-link block px-3 py-2 rounded">Maxwell's Equations</a>
+      <a href="#gauss"       class="nav-link block px-3 py-2 rounded">Gauss's Laws</a>
+      <a href="#faraday"     class="nav-link block px-3 py-2 rounded">Faraday's Law</a>
+      <a href="#ampere"      class="nav-link block px-3 py-2 rounded">Ampère–Maxwell</a>
+      <a href="#integral"    class="nav-link block px-3 py-2 rounded">Integral Form</a>
+      <a href="#boundary"    class="nav-link block px-3 py-2 rounded">Boundary Conditions</a>
+
+      <div class="px-3 pt-4 pb-1 text-xs uppercase tracking-wider text-slate-500">Lecture 2 · Wave</div>
+      <a href="#harmonic"    class="nav-link block px-3 py-2 rounded">Time-Harmonic Field</a>
+      <a href="#spectrum"    class="nav-link block px-3 py-2 rounded">EM Spectrum</a>
+      <a href="#phasor"      class="nav-link block px-3 py-2 rounded">Phasors</a>
+      <a href="#wave-eq"     class="nav-link block px-3 py-2 rounded">Wave Equation</a>
+      <a href="#helmholtz"   class="nav-link block px-3 py-2 rounded">Helmholtz</a>
+
+      <div class="px-3 pt-4 pb-1 text-xs uppercase tracking-wider text-slate-500">Interactive</div>
+      <a href="#visualizer"  class="nav-link block px-3 py-2 rounded">🌊 Wave Visualizer</a>
+      <a href="#calculator"  class="nav-link block px-3 py-2 rounded">🧮 EM Calculator</a>
+      <a href="#quiz"        class="nav-link block px-3 py-2 rounded">📝 Quick Quiz</a>
+      <a href="#cheat"       class="nav-link block px-3 py-2 rounded font-semibold text-amber-300">📋 Cheat Sheet</a>
+    </nav>
+    <div class="mt-auto p-4 text-xs text-slate-500 border-t border-white/10">
+      Instructor: Budsara Boriboon (BBB)<br>
+      Dept. of Electrical Engineering
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 min-w-0 px-5 md:px-12 lg:px-16 py-8 md:py-12 prose-lg max-w-none">
+
+    <!-- Hero -->
+    <section id="overview" class="mb-14">
+      <div class="flex items-center gap-2 text-sm mb-4">
+        <span class="chip px-3 py-1 rounded-full">Lecture #1–#2</span>
+        <span class="chip-b px-3 py-1 rounded-full">2/2025</span>
+        <span class="chip-g px-3 py-1 rounded-full">Interactive Notes</span>
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black leading-tight">
+        <span class="gradient-text">Maxwell's Equations</span><br>
+        <span class="text-white">& Time-Harmonic Fields</span>
+      </h1>
+      <p class="mt-5 text-slate-300 max-w-3xl text-lg md:text-xl">
+        A complete, interactive walk-through of the four Maxwell equations, boundary
+        conditions, phasor representation, and the wave equation — derived and
+        solved exactly as presented in lectures #1 and #2 of <span class="text-brand-400 font-semibold">2102221 Engineering Electromagnetics</span>.
+      </p>
+
+      <div class="grid md:grid-cols-4 gap-4 mt-10">
+        <div class="card rounded-xl p-5">
+          <div class="text-sm text-slate-400">Equations</div>
+          <div class="text-3xl font-bold text-white mt-1">4</div>
+          <div class="text-sm text-slate-500 mt-1">Maxwell's set</div>
+        </div>
+        <div class="card rounded-xl p-5">
+          <div class="text-sm text-slate-400">Wave speed (free space)</div>
+          <div class="text-3xl font-bold text-white mt-1">3×10⁸ <span class="text-base text-slate-400">m/s</span></div>
+          <div class="text-sm text-slate-500 mt-1">$c = 1/\sqrt{\mu_0\varepsilon_0}$</div>
+        </div>
+        <div class="card rounded-xl p-5">
+          <div class="text-sm text-slate-400">Free-space ε₀</div>
+          <div class="text-3xl font-bold text-white mt-1">8.854 <span class="text-base text-slate-400">pF/m</span></div>
+          <div class="text-sm text-slate-500 mt-1">Permittivity</div>
+        </div>
+        <div class="card rounded-xl p-5">
+          <div class="text-sm text-slate-400">Free-space μ₀</div>
+          <div class="text-3xl font-bold text-white mt-1">4π <span class="text-base text-slate-400">×10⁻⁷ H/m</span></div>
+          <div class="text-sm text-slate-500 mt-1">Permeability</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================== VARIABLE GLOSSARY ================== -->
+    <section id="variables" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">📖 Variable Glossary — ชื่อตัวแปรทั้งหมด</h2>
+      <p class="text-slate-400 mb-6 text-lg">เปิดหน้านี้ไว้เป็นอ้างอิงก่อนอ่านเนื้อหา — ทุกสัญลักษณ์ใช้ครอบคลุมทั้งสองเล็คเชอร์</p>
+
+      <!-- Field vectors -->
+      <div class="card rounded-xl p-6 mb-4">
+        <h3 class="font-bold text-xl mb-4 text-brand-400">🔵 Field Vectors — สนาม</h3>
+        <div class="overflow-x-auto">
+          <table class="var-table w-full">
+            <thead>
+              <tr><th>Symbol</th><th>Unit</th><th>Name &amp; Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>$\vec{E}$</td><td>V/m</td><td><b>Electric Field</b> — สนามไฟฟ้า (แรงต่อหน่วยประจุทดสอบ)</td></tr>
+              <tr><td>$\vec{D}$</td><td>C/m²</td><td><b>Electric Flux Density</b> — ความหนาแน่นฟลักซ์ไฟฟ้า ($\vec{D}=\varepsilon\vec{E}$)</td></tr>
+              <tr><td>$\vec{H}$</td><td>A/m</td><td><b>Magnetic Field</b> — สนามแม่เหล็ก (เชิง auxiliary)</td></tr>
+              <tr><td>$\vec{B}$</td><td>T (Tesla)</td><td><b>Magnetic Flux Density</b> — ความหนาแน่นฟลักซ์แม่เหล็ก ($\vec{B}=\mu\vec{H}$)</td></tr>
+              <tr><td>$\vec{J}$</td><td>A/m²</td><td><b>Current Density</b> — ความหนาแน่นกระแส ($\vec{J}=\sigma\vec{E}$)</td></tr>
+              <tr><td>$\rho_v$</td><td>C/m³</td><td><b>Volume Charge Density</b> — ความหนาแน่นประจุต่อปริมาตร</td></tr>
+              <tr><td>$\rho_s$</td><td>C/m²</td><td><b>Surface Charge Density</b> — ความหนาแน่นประจุบนผิว</td></tr>
+              <tr><td>$\vec{J}_s$</td><td>A/m</td><td><b>Surface Current Density</b> — ความหนาแน่นกระแสบนผิว</td></tr>
+              <tr><td>$\Phi$</td><td>Wb</td><td><b>Magnetic Flux</b> — ฟลักซ์แม่เหล็ก ($\Phi=\int\vec{B}\cdot d\vec{s}$)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Material properties -->
+      <div class="card rounded-xl p-6 mb-4">
+        <h3 class="font-bold text-xl mb-4 text-brand-400">🟡 Material Properties — คุณสมบัติตัวกลาง</h3>
+        <div class="overflow-x-auto">
+          <table class="var-table w-full">
+            <thead>
+              <tr><th>Symbol</th><th>Unit</th><th>Name &amp; Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>$\varepsilon$</td><td>F/m</td><td><b>Permittivity</b> — ค่าสภาพยอมของตัวกลาง ($\varepsilon=\varepsilon_0\varepsilon_r$)</td></tr>
+              <tr><td>$\varepsilon_0$</td><td>8.854×10⁻¹² F/m</td><td><b>Permittivity of free space</b> — ค่าคงที่ของสุญญากาศ</td></tr>
+              <tr><td>$\varepsilon_r$</td><td>dimensionless</td><td><b>Relative permittivity</b> — ค่าสัมพัทธ์ (ไดอิเล็กตริกคอนสแตนต์)</td></tr>
+              <tr><td>$\mu$</td><td>H/m</td><td><b>Permeability</b> — ค่าสภาพซึมซาบแม่เหล็ก ($\mu=\mu_0\mu_r$)</td></tr>
+              <tr><td>$\mu_0$</td><td>4π×10⁻⁷ H/m</td><td><b>Permeability of free space</b></td></tr>
+              <tr><td>$\mu_r$</td><td>dimensionless</td><td><b>Relative permeability</b></td></tr>
+              <tr><td>$\sigma$</td><td>S/m</td><td><b>Conductivity</b> — ค่าการนำไฟฟ้า ($\sigma=0$: ลอสเลส, $\sigma=\infty$: PEC)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Wave parameters -->
+      <div class="card rounded-xl p-6 mb-4">
+        <h3 class="font-bold text-xl mb-4 text-brand-400">🟢 Wave Parameters — พารามิเตอร์คลื่น</h3>
+        <div class="overflow-x-auto">
+          <table class="var-table w-full">
+            <thead>
+              <tr><th>Symbol</th><th>Unit</th><th>Name &amp; Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>$E_0$</td><td>V/m</td><td><b>Amplitude</b> — แอมพลิจูดของสนาม (ค่าสูงสุด)</td></tr>
+              <tr><td>$\omega$</td><td>rad/s</td><td><b>Angular frequency</b> — ความถี่เชิงมุม ($\omega=2\pi f$)</td></tr>
+              <tr><td>$f$</td><td>Hz</td><td><b>Frequency</b> — ความถี่ (รอบต่อวินาที)</td></tr>
+              <tr><td>$T$</td><td>s</td><td><b>Period</b> — คาบเวลา ($T=1/f$)</td></tr>
+              <tr><td>$\lambda$</td><td>m</td><td><b>Wavelength</b> — ความยาวคลื่น ($\lambda=v/f=2\pi/k$)</td></tr>
+              <tr><td>$k$</td><td>rad/m</td><td><b>Wavenumber</b> — เลขคลื่น ($k=\omega\sqrt{\mu\varepsilon}$)</td></tr>
+              <tr><td>$\theta$ or $\phi$</td><td>rad or deg</td><td><b>Initial phase</b> — เฟสเริ่มต้น</td></tr>
+              <tr><td>$t$</td><td>s</td><td><b>Time</b></td></tr>
+              <tr><td>$c$</td><td>3×10⁸ m/s</td><td><b>Speed of light</b> — ความเร็วแสงในสุญญากาศ ($c=1/\sqrt{\mu_0\varepsilon_0}$)</td></tr>
+              <tr><td>$v$</td><td>m/s</td><td><b>Phase velocity</b> — ความเร็วเฟสในตัวกลาง ($v=1/\sqrt{\mu\varepsilon}$)</td></tr>
+              <tr><td>$\eta$</td><td>Ω</td><td><b>Intrinsic impedance</b> — ความต้านทานของตัวกลาง ($\eta=\sqrt{\mu/\varepsilon}$)</td></tr>
+              <tr><td>$\eta_0$</td><td>≈ 377 Ω</td><td>ความต้านทานของสุญญากาศ ($=120\pi\,\Omega$)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Phasor & operators -->
+      <div class="card rounded-xl p-6">
+        <h3 class="font-bold text-xl mb-4 text-brand-400">🟣 Phasor &amp; Vector Operators</h3>
+        <div class="overflow-x-auto">
+          <table class="var-table w-full">
+            <thead>
+              <tr><th>Symbol</th><th>Meaning</th><th>ใช้ทำอะไร</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>$\hat{\vec{E}},\hat{\vec{H}}$</td><td>Phasor (complex)</td><td>สนามในโดเมนความถี่ — ไม่มี $t$</td></tr>
+              <tr><td>$j$</td><td>$\sqrt{-1}$</td><td>หน่วยจำนวนจินตภาพ</td></tr>
+              <tr><td>$e^{j\theta}$</td><td>$\cos\theta + j\sin\theta$</td><td>รูปเอ็กซ์โปเนนเชียลเชิงซ้อน</td></tr>
+              <tr><td>$\operatorname{Re}[\cdot]$</td><td>Real part</td><td>แปลง phasor → time-domain</td></tr>
+              <tr><td>$\nabla$</td><td>"del" operator</td><td>$\hat{a}_x\partial/\partial x + \hat{a}_y\partial/\partial y + \hat{a}_z\partial/\partial z$</td></tr>
+              <tr><td>$\nabla\cdot\vec{A}$</td><td>Divergence</td><td>แหล่งกำเนิด/ไหลออก (scalar)</td></tr>
+              <tr><td>$\nabla\times\vec{A}$</td><td>Curl</td><td>การหมุนวนของสนาม (vector)</td></tr>
+              <tr><td>$\nabla^2$</td><td>Laplacian</td><td>$\nabla\cdot\nabla$ ใช้กับสมการคลื่น</td></tr>
+              <tr><td>$\hat{a}_x,\hat{a}_y,\hat{a}_z$</td><td>Unit vectors</td><td>ทิศทางแกน Cartesian</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recap -->
+    <section id="recap" class="mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">1 · Field Type Recap</h2>
+      <p class="text-slate-400 mb-5 text-lg">สนามแม่เหล็กไฟฟ้าแบ่งตามการเคลื่อนที่ของประจุ:</p>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card rounded-xl p-5">
+          <div class="text-sm chip-b inline-block px-2 py-1 rounded mb-3">Electrostatic</div>
+          <ul class="space-y-2 text-slate-300">
+            <li>• Charge is <span class="text-white font-semibold">stationary</span></li>
+            <li>• Time <span class="text-white font-semibold">independent</span></li>
+            <li>• Only $\vec{E}$ and $\vec{D}$</li>
+          </ul>
+        </div>
+        <div class="card rounded-xl p-5">
+          <div class="text-sm chip-g inline-block px-2 py-1 rounded mb-3">Magnetostatic</div>
+          <ul class="space-y-2 text-slate-300">
+            <li>• Charge moves at <span class="text-white font-semibold">constant velocity</span></li>
+            <li>• Time <span class="text-white font-semibold">independent</span></li>
+            <li>• Only $\vec{H}$ and $\vec{B}$</li>
+          </ul>
+        </div>
+        <div class="card rounded-xl p-5 ring-2 ring-brand-500/40">
+          <div class="text-sm chip inline-block px-2 py-1 rounded mb-3">Electromagnetic ★</div>
+          <ul class="space-y-2 text-slate-300">
+            <li>• Charge moves with <span class="text-white font-semibold">acceleration</span></li>
+            <li>• Time <span class="text-white font-semibold">dependent</span></li>
+            <li>• $\vec{E}$ and $\vec{H}$ coupled → waves!</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Maxwell core -->
+    <section id="maxwell" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">2 · Maxwell's Equations ⭐</h2>
+      <p class="text-slate-300 mb-8 max-w-3xl text-lg">สี่สมการหลักที่อธิบายทุกปรากฏการณ์แม่เหล็กไฟฟ้าคลาสสิก — นี่คือ <b>หัวใจของวิชานี้</b></p>
+
+      <!-- The four equations as KEY boxes -->
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="key-eq">
+          <div class="flex items-center justify-between mb-3 mt-2">
+            <span class="font-bold text-sky-300 text-lg">① Gauss's Law (Electric)</span>
+          </div>
+          <div class="text-2xl my-4 text-center">$$\nabla\cdot\vec{D}=\rho_v$$</div>
+          <div class="text-sm text-slate-300 border-t border-white/10 pt-3 mt-3">
+            <div class="mb-1"><span class="var-badge">$\vec{D}$</span> electric flux density · <span class="var-badge">$\rho_v$</span> volume charge density</div>
+            <div class="text-slate-400 mt-2">💡 "Electric flux from a closed volume = enclosed charge"</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="flex items-center justify-between mb-3 mt-2">
+            <span class="font-bold text-sky-300 text-lg">② Gauss's Law (Magnetic)</span>
+          </div>
+          <div class="text-2xl my-4 text-center">$$\nabla\cdot\vec{B}=0$$</div>
+          <div class="text-sm text-slate-300 border-t border-white/10 pt-3 mt-3">
+            <div class="mb-1"><span class="var-badge">$\vec{B}$</span> magnetic flux density</div>
+            <div class="text-slate-400 mt-2">💡 "No magnetic monopoles — field lines always close on themselves"</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="flex items-center justify-between mb-3 mt-2">
+            <span class="font-bold text-amber-300 text-lg">③ Faraday's Law</span>
+          </div>
+          <div class="text-2xl my-4 text-center">$$\nabla\times\vec{E}=-\dfrac{\partial\vec{B}}{\partial t}$$</div>
+          <div class="text-sm text-slate-300 border-t border-white/10 pt-3 mt-3">
+            <div class="mb-1"><span class="var-badge">$\vec{E}$</span> electric field · <span class="var-badge">$\vec{B}$</span> magnetic flux density · <span class="var-badge">$t$</span> time</div>
+            <div class="text-slate-400 mt-2">💡 "Changing $\vec{B}$ induces circulating $\vec{E}$" (electromagnetic induction)</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="flex items-center justify-between mb-3 mt-2">
+            <span class="font-bold text-amber-300 text-lg">④ Ampère–Maxwell</span>
+          </div>
+          <div class="text-2xl my-4 text-center">$$\nabla\times\vec{H}=\vec{J}+\dfrac{\partial\vec{D}}{\partial t}$$</div>
+          <div class="text-sm text-slate-300 border-t border-white/10 pt-3 mt-3">
+            <div class="mb-1"><span class="var-badge">$\vec{H}$</span> magnetic field · <span class="var-badge">$\vec{J}$</span> current density · <span class="var-badge">$\partial\vec{D}/\partial t$</span> displacement current</div>
+            <div class="text-slate-400 mt-2">💡 "Both current and changing $\vec{D}$ produce circulating $\vec{H}$"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Constitutive Relations -->
+      <div class="card rounded-xl p-6">
+        <h3 class="font-bold text-xl mb-4">🔗 Constitutive Relations (Simple / Linear / Isotropic media)</h3>
+        <p class="text-slate-400 mb-4">ใช้เชื่อมระหว่างคู่สนาม — ขึ้นกับตัวกลาง</p>
+        <div class="grid md:grid-cols-3 gap-4 text-center">
+          <div class="eq-box rounded-lg p-5">
+            <div class="text-2xl mb-2">$$\vec{D}=\varepsilon\vec{E}$$</div>
+            <div class="text-sm text-slate-400"><span class="var-badge">$\varepsilon$</span> = permittivity</div>
+          </div>
+          <div class="eq-box rounded-lg p-5">
+            <div class="text-2xl mb-2">$$\vec{B}=\mu\vec{H}$$</div>
+            <div class="text-sm text-slate-400"><span class="var-badge">$\mu$</span> = permeability</div>
+          </div>
+          <div class="eq-box rounded-lg p-5">
+            <div class="text-2xl mb-2">$$\vec{J}=\sigma\vec{E}$$</div>
+            <div class="text-sm text-slate-400"><span class="var-badge">$\sigma$</span> = conductivity (Ohm's law)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gauss deep -->
+    <section id="gauss" class="mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">3 · Gauss's Laws — In Depth</h2>
+      <div class="space-y-4">
+        <details class="card rounded-xl p-6" open>
+          <summary class="flex items-center justify-between">
+            <span class="font-semibold text-lg">Electric: $\nabla\cdot\vec{D}=\rho_v$</span>
+            <span class="chev text-xl">▶</span>
+          </summary>
+          <div class="mt-5 text-slate-300 space-y-3">
+            <p>Via the <b>divergence theorem</b>, the differential form converts to the integral form:</p>
+            <div class="eq-box rounded-lg p-4 text-xl text-center">$$\oint_S \vec{D}\cdot d\vec{s}=\int_V \rho_v\,dv = Q_{\text{enclosed}}$$</div>
+            <div class="text-sm text-slate-400">
+              <span class="var-badge">$S$</span> = closed surface (Gaussian),
+              <span class="var-badge">$V$</span> = enclosed volume,
+              <span class="var-badge">$Q_{\text{enc}}$</span> = total enclosed charge (C)
+            </div>
+            <p>With $\vec{D}=\varepsilon\vec{E}$, permittivity $\varepsilon$ has units of <b>F/m</b>.</p>
+          </div>
+        </details>
+
+        <details class="card rounded-xl p-6">
+          <summary class="flex items-center justify-between">
+            <span class="font-semibold text-lg">Magnetic: $\nabla\cdot\vec{B}=0$</span>
+            <span class="chev text-xl">▶</span>
+          </summary>
+          <div class="mt-5 text-slate-300 space-y-3">
+            <div class="eq-box rounded-lg p-4 text-xl text-center">$$\oint_S \vec{B}\cdot d\vec{s}=0$$</div>
+            <p>No net magnetic flux through any closed surface — magnetic field lines have no source or sink (no isolated N or S poles exist).</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Faraday -->
+    <section id="faraday" class="mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">4 · Faraday's Law</h2>
+      <div class="card rounded-xl p-6">
+        <p class="text-slate-300 text-lg">Starting from the electromotive force (emf) and magnetic flux:</p>
+        <div class="grid md:grid-cols-2 gap-4 my-5">
+          <div class="eq-box rounded-lg p-4 text-center">
+            <div class="text-xl">$$\text{emf}=\oint_C\vec{E}\cdot d\vec{l}$$</div>
+            <div class="text-sm text-slate-400 mt-2">emf = line integral of $\vec{E}$ around loop $C$</div>
+          </div>
+          <div class="eq-box rounded-lg p-4 text-center">
+            <div class="text-xl">$$\Phi=\int_S\vec{B}\cdot d\vec{s}$$</div>
+            <div class="text-sm text-slate-400 mt-2">$\Phi$ = magnetic flux through surface $S$</div>
+          </div>
+        </div>
+        <p class="text-slate-300 text-lg">Faraday's induction law: $\text{emf}=-\partial\Phi/\partial t$. Applying Stokes' theorem yields the differential form:</p>
+        <div class="key-eq mt-6 mb-3">
+          <div class="text-2xl md:text-3xl text-center py-2">$$\nabla\times\vec{E}=-\dfrac{\partial\vec{B}}{\partial t}$$</div>
+        </div>
+        <div class="bg-white/5 rounded-lg p-4 mt-4">
+          <p class="font-semibold text-amber-300 mb-2">Physical picture (three steps):</p>
+          <ol class="list-decimal ml-5 space-y-1 text-slate-300">
+            <li>Moving magnet → creates varying $\vec{B}$</li>
+            <li>Flux $\Phi$ through the coil changes over time</li>
+            <li>An emf is induced → current flows in the coil</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ampere -->
+    <section id="ampere" class="mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">5 · Ampère–Maxwell — Why Displacement Current?</h2>
+      <div class="card rounded-xl p-6 text-slate-300 space-y-4">
+        <p class="text-lg">Start with Ampère's circuital law $\nabla\times\vec{H}=\vec{J}$ and take the divergence of both sides:</p>
+        <div class="eq-box rounded-lg p-4 text-xl text-center">$$\underbrace{\nabla\cdot(\nabla\times\vec{H})}_{=\,0\text{ (vector id.)}} = \nabla\cdot\vec{J}$$</div>
+        <p class="text-lg">But the <b>continuity equation</b> demands:</p>
+        <div class="eq-box rounded-lg p-4 text-xl text-center">$$\nabla\cdot\vec{J}=-\dfrac{\partial\rho_v}{\partial t}$$</div>
+        <p class="text-lg text-amber-300">⚠️ The two sides conflict unless charge density is static!</p>
+        <p class="text-lg">Maxwell's fix: add the <span class="text-brand-400 font-semibold">displacement current density</span> $\partial\vec{D}/\partial t$ to make it always consistent:</p>
+        <div class="key-eq">
+          <div class="text-2xl md:text-3xl text-center py-2">$$\nabla\times\vec{H}=\underbrace{\vec{J}}_{\text{conduction}}+\underbrace{\dfrac{\partial\vec{D}}{\partial t}}_{\text{displacement}}$$</div>
+        </div>
+        <p class="text-sm text-slate-400">
+          Verification: $\nabla\cdot(\nabla\times\vec{H}) = \nabla\cdot\vec{J}+\partial(\nabla\cdot\vec{D})/\partial t = -\partial\rho_v/\partial t + \partial\rho_v/\partial t = 0$ ✓
+        </p>
+      </div>
+    </section>
+
+    <!-- Integral form -->
+    <section id="integral" class="mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">6 · Integral Form Summary</h2>
+      <p class="text-slate-400 mb-5 text-lg">รูปแบบสมการทั้ง <b>differential</b> (ใช้ที่จุด) และ <b>integral</b> (ใช้บนพื้นที่/ปริมาตร):</p>
+      <div class="card rounded-xl overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr><th>Law</th><th>Differential</th><th>Integral</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Gauss (E)</b></td><td>$\nabla\cdot\vec{D}=\rho_v$</td><td>$\oint_S \vec{D}\cdot d\vec{s}=Q_{enc}$</td></tr>
+            <tr><td><b>Gauss (B)</b></td><td>$\nabla\cdot\vec{B}=0$</td><td>$\oint_S \vec{B}\cdot d\vec{s}=0$</td></tr>
+            <tr><td><b>Faraday</b></td><td>$\nabla\times\vec{E}=-\partial\vec{B}/\partial t$</td><td>$\oint_C \vec{E}\cdot d\vec{l}=-\partial\Phi/\partial t$</td></tr>
+            <tr><td><b>Ampère–Maxwell</b></td><td>$\nabla\times\vec{H}=\vec{J}+\partial\vec{D}/\partial t$</td><td>$\oint_C \vec{H}\cdot d\vec{l}=I_{enc}+\int_S \partial\vec{D}/\partial t\,d\vec{s}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Boundary -->
+    <section id="boundary" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">7 · Boundary Conditions ⭐</h2>
+      <p class="text-slate-400 mb-5 text-lg">
+        เมื่อคลื่นเดินทางผ่านรอยต่อระหว่างสองตัวกลาง — สนามต้องสอดคล้องกัน 4 เงื่อนไข:
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <div class="key-eq">
+          <div class="font-bold text-sky-300 text-lg mt-2 mb-3">Normal components (ตั้งฉาก)</div>
+          <div class="eq-box rounded-lg p-4 mb-3 text-center text-xl">$$D_{n1}-D_{n2}=\rho_s$$</div>
+          <div class="text-sm text-slate-400 mb-4"><span class="var-badge">$\rho_s$</span> = surface charge density (C/m²)</div>
+          <div class="eq-box rounded-lg p-4 text-center text-xl">$$B_{n1}=B_{n2}$$</div>
+          <div class="text-sm text-slate-400 mt-2">B ตั้งฉาก ต่อเนื่องเสมอ</div>
+        </div>
+        <div class="key-eq">
+          <div class="font-bold text-amber-300 text-lg mt-2 mb-3">Tangential components (ขนาน)</div>
+          <div class="eq-box rounded-lg p-4 mb-3 text-center text-xl">$$E_{t1}=E_{t2}$$</div>
+          <div class="text-sm text-slate-400 mb-4">E ขนาน ต่อเนื่องเสมอ</div>
+          <div class="eq-box rounded-lg p-4 text-center text-xl">$$H_{t1}-H_{t2}=J_s$$</div>
+          <div class="text-sm text-slate-400 mt-2"><span class="var-badge">$J_s$</span> = surface current density (A/m)</div>
+        </div>
+      </div>
+
+      <h3 class="font-bold text-xl mb-3 text-slate-200">Media Classification</h3>
+      <div class="card rounded-xl overflow-x-auto">
+        <table class="w-full">
+          <thead><tr><th>Medium</th><th>$\sigma$ (S/m)</th><th>$\varepsilon$ (F/m)</th><th>$\mu$ (H/m)</th></tr></thead>
+          <tbody>
+            <tr><td><b>Free space</b></td><td>0</td><td>$\varepsilon_0 = 8.854\times10^{-12}$</td><td>$\mu_0 = 4\pi\times10^{-7}$</td></tr>
+            <tr><td><b>Lossless dielectric</b></td><td>0</td><td>$\varepsilon_0\varepsilon_r$</td><td>$\mu_0\mu_r$</td></tr>
+            <tr><td><b>Lossy dielectric</b></td><td>≠ 0</td><td>$\varepsilon_0\varepsilon_r$</td><td>$\mu_0\mu_r$</td></tr>
+            <tr><td><b>Perfect conductor (PEC)</b></td><td>$\infty$</td><td>$\varepsilon_0\varepsilon_r$</td><td>$\mu_0\mu_r$</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== LECTURE 2 ==================== -->
+
+    <section id="harmonic" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">8 · Time-Harmonic Field</h2>
+      <p class="text-slate-400 mb-5 text-lg">สนามที่แกว่งแบบไซน์สเตดี้-สเตท ในระบบเชิงเส้น (ω คงที่)</p>
+      <div class="card rounded-xl p-6 space-y-4 text-slate-300">
+        <p class="text-lg">รูปทั่วไปของสนามฮาร์มอนิก:</p>
+        <div class="key-eq">
+          <div class="text-xl md:text-2xl text-center py-3">
+            $$\vec{E}(x,y,z,t)=\hat{a}_xE_x\cos(\omega t+\theta_x)+\hat{a}_yE_y\cos(\omega t+\theta_y)+\hat{a}_zE_z\cos(\omega t+\theta_z)$$
+          </div>
+        </div>
+        <div class="bg-white/5 rounded-lg p-4">
+          <p class="font-semibold text-amber-300 mb-2">ตัวแปรในสมการ:</p>
+          <ul class="space-y-1">
+            <li><span class="var-badge">$E_x, E_y, E_z$</span> amplitude in each direction (V/m) — ขึ้นกับ <b>ตำแหน่ง</b> เท่านั้น</li>
+            <li><span class="var-badge">$\omega$</span> angular frequency (rad/s) — คงที่ทั้งระบบ</li>
+            <li><span class="var-badge">$t$</span> time (s)</li>
+            <li><span class="var-badge">$\theta_x,\theta_y,\theta_z$</span> initial phase in each direction (rad) — ขึ้นกับ <b>ตำแหน่ง</b></li>
+          </ul>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-3 pt-3">
+          <div class="rounded-lg p-4 bg-white/5">
+            <div class="text-sm text-slate-400 mb-1">✓ Simplifies math</div>
+            <div>ฟังก์ชันไซน์ให้ derivatives/integrals ง่าย</div>
+          </div>
+          <div class="rounded-lg p-4 bg-white/5">
+            <div class="text-sm text-slate-400 mb-1">✓ Phasor analysis</div>
+            <div>ตัด $t$ ออกจากสมการ Maxwell</div>
+          </div>
+          <div class="rounded-lg p-4 bg-white/5">
+            <div class="text-sm text-slate-400 mb-1">✓ Real systems</div>
+            <div>AC power, comms, electronics</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spectrum -->
+    <section id="spectrum" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">9 · EM Spectrum</h2>
+      <div class="card rounded-xl p-6">
+        <div class="grid grid-cols-2 md:grid-cols-7 gap-2 text-center text-sm">
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#991b1b,#b91c1c)"><div class="font-bold">Radio</div>10⁶ Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#c2410c,#ea580c)"><div class="font-bold">Microwave</div>10⁹ Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#a16207,#ca8a04)"><div class="font-bold">Infrared</div>10¹² Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#15803d,#16a34a)"><div class="font-bold">Visible</div>10¹⁵ Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)"><div class="font-bold">UV</div>10¹⁶ Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#6d28d9,#7c3aed)"><div class="font-bold">X-rays</div>10¹⁸ Hz</div>
+          <div class="rounded-lg p-3" style="background:linear-gradient(135deg,#86198f,#a21caf)"><div class="font-bold">Gamma</div>10²¹ Hz</div>
+        </div>
+        <p class="text-sm text-slate-400 mt-4">
+          The <span class="text-amber-300 font-semibold">Radio Window</span> (≈10⁶–10¹⁰ Hz) and <span class="text-amber-300 font-semibold">Optical Window</span> (visible light) are the two main atmospheric transparency bands. Common uses: AM radio, FM radio, cell phone, Wi-Fi, microwave oven, IR remotes, visible light, X-rays, nuclear power.
+        </p>
+      </div>
+    </section>
+
+    <!-- Phasor -->
+    <section id="phasor" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">10 · Phasor — Frequency Domain</h2>
+      <div class="card rounded-xl p-6 space-y-5 text-slate-300">
+        <p class="text-lg">Complex-number representation:</p>
+        <div class="eq-box rounded-lg p-4 text-xl text-center">
+          $$z = r\cos\theta + jr\sin\theta = x+jy = r\angle\theta = re^{j\theta}$$
+        </div>
+        <div class="text-sm text-slate-400">
+          <span class="var-badge">$r$</span> = magnitude · <span class="var-badge">$\theta$</span> = phase angle · <span class="var-badge">$j$</span> = $\sqrt{-1}$
+        </div>
+
+        <p class="text-lg pt-2"><b>Time ↔ Phasor</b> conversion (the golden rule):</p>
+        <div class="key-eq">
+          <div class="text-2xl md:text-3xl text-center py-2">$$\vec{E}(x,y,z,t)=\operatorname{Re}\!\left[\hat{\vec{E}}\,e^{j\omega t}\right]$$</div>
+        </div>
+        <p>Each component: $\hat{E}_x = E_x e^{j\theta_x}$ (complex amplitude).</p>
+
+        <h3 class="font-bold text-xl text-amber-300 mt-6">Calculus becomes algebra! 🎉</h3>
+        <p>In the phasor domain, derivatives and integrals become simple multiplications:</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="key-eq">
+            <div class="text-xl md:text-2xl text-center py-2">$$\dfrac{\partial}{\partial t}\ \Longrightarrow\ j\omega$$</div>
+            <div class="text-sm text-slate-400 text-center mt-2">เพราะ $\dfrac{\partial}{\partial t}e^{j\omega t}=j\omega e^{j\omega t}$</div>
+          </div>
+          <div class="key-eq">
+            <div class="text-xl md:text-2xl text-center py-2">$$\int dt\ \Longrightarrow\ \dfrac{1}{j\omega}$$</div>
+            <div class="text-sm text-slate-400 text-center mt-2">เพราะ $\int e^{j\omega t}dt = \dfrac{e^{j\omega t}}{j\omega}$</div>
+          </div>
+        </div>
+
+        <h3 class="font-bold text-xl text-amber-300 mt-6">Maxwell's Equations — Phasor Form</h3>
+        <p>แทน ∂/∂t ด้วย jω ในสมการเดิม:</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="eq-box rounded-lg p-4 text-xl text-center">$$\nabla\cdot\hat{\vec{D}}=\rho_v$$</div>
+          <div class="eq-box rounded-lg p-4 text-xl text-center">$$\nabla\cdot\hat{\vec{B}}=0$$</div>
+          <div class="eq-box rounded-lg p-4 text-xl text-center">$$\nabla\times\hat{\vec{E}}=-j\omega\hat{\vec{B}}$$</div>
+          <div class="eq-box rounded-lg p-4 text-xl text-center">$$\nabla\times\hat{\vec{H}}=\hat{\vec{J}}+j\omega\hat{\vec{D}}$$</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wave equation -->
+    <section id="wave-eq" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">11 · Deriving the Wave Equation ⭐</h2>
+      <div class="card rounded-xl p-6 space-y-4 text-slate-300">
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+          <p class="font-semibold text-amber-300 mb-2">📋 Conditions (must hold):</p>
+          <ul class="space-y-1">
+            <li>• <b>Unbounded</b> region</li>
+            <li>• <b>Source-free</b>: $\rho_v=0$, $\vec{J}=0$</li>
+            <li>• <b>Lossless</b>: $\sigma=0$</li>
+            <li>• <b>Simple medium</b>: linear, isotropic, homogeneous (ε, μ constant)</li>
+          </ul>
+        </div>
+
+        <p class="text-lg">Take the curl of Faraday's law:</p>
+        <div class="eq-box rounded-lg p-4 text-xl text-center">
+          $$\nabla\times(\nabla\times\vec{E})=-\mu\,\dfrac{\partial}{\partial t}(\nabla\times\vec{H})=-\mu\varepsilon\,\dfrac{\partial^2\vec{E}}{\partial t^2}$$
+        </div>
+
+        <p class="text-lg">Using vector identity $\nabla\times\nabla\times\vec{A}=\nabla(\nabla\cdot\vec{A})-\nabla^2\vec{A}$ with $\nabla\cdot\vec{E}=0$:</p>
+
+        <div class="key-eq">
+          <div class="text-2xl md:text-3xl text-center py-3">$$\nabla^2\vec{E}=\mu\varepsilon\,\dfrac{\partial^2\vec{E}}{\partial t^2}$$</div>
+          <div class="text-center text-sm text-slate-400 mt-2">Wave Equation for $\vec{E}$</div>
+        </div>
+        <div class="key-eq">
+          <div class="text-2xl md:text-3xl text-center py-3">$$\nabla^2\vec{H}=\mu\varepsilon\,\dfrac{\partial^2\vec{H}}{\partial t^2}$$</div>
+          <div class="text-center text-sm text-slate-400 mt-2">Wave Equation for $\vec{H}$</div>
+        </div>
+
+        <div class="bg-white/5 rounded-lg p-4">
+          <p class="text-lg">
+            👉 This is the 3-D <span class="text-brand-400 font-semibold">homogeneous vector wave equation</span>.
+          </p>
+          <p class="text-lg mt-2">
+            Wave speed: $\displaystyle v=\frac{1}{\sqrt{\mu\varepsilon}}$, which in free space gives $c=3\times10^8$ m/s.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Helmholtz -->
+    <section id="helmholtz" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">12 · Helmholtz Equations ⭐</h2>
+      <div class="card rounded-xl p-6 space-y-4 text-slate-300">
+        <p class="text-lg">ในโดเมนความถี่ (phasor) ∂/∂t → jω ทำให้สมการคลื่นกลายเป็นสมการเวกเตอร์ธรรมดา:</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="key-eq">
+            <div class="text-xl md:text-2xl text-center py-2">$$\nabla^2\hat{\vec{E}}+\omega^2\mu\varepsilon\,\hat{\vec{E}}=0$$</div>
+          </div>
+          <div class="key-eq">
+            <div class="text-xl md:text-2xl text-center py-2">$$\nabla^2\hat{\vec{H}}+\omega^2\mu\varepsilon\,\hat{\vec{H}}=0$$</div>
+          </div>
+        </div>
+        <p class="text-lg">กำหนดเลขคลื่น (wavenumber):</p>
+        <div class="eq-box rounded-lg p-4 text-xl text-center">
+          $$k = \omega\sqrt{\mu\varepsilon}\quad\text{(rad/m)}$$
+        </div>
+        <p class="text-lg">รูปย่อของ Helmholtz:</p>
+        <div class="key-eq">
+          <div class="text-2xl md:text-3xl text-center py-2">$$\nabla^2\hat{\vec{E}}+k^2\hat{\vec{E}}=0$$</div>
+        </div>
+      </div>
+
+      <details class="card rounded-xl p-6 mt-5">
+        <summary class="flex items-center justify-between">
+          <span class="font-bold text-lg">📘 Worked Example — Plane Wave in Free Space</span>
+          <span class="chev text-xl">▶</span>
+        </summary>
+        <div class="mt-5 text-slate-300 space-y-4">
+          <p>Given: $\vec{E}=\hat{a}_xE_0\cos\!\bigl[10^8\pi(t-z/c)+\theta\bigr]$ V/m in free space.</p>
+          <p><b>(a)</b> Verify it satisfies $\nabla^2\vec{E}=\mu\varepsilon\,\partial^2\vec{E}/\partial t^2$ — both sides reduce to $-\hat{a}_x\varepsilon_0\mu_0 E_0(10^8\pi)^2\cos[\cdots]$ ✓</p>
+          <p><b>(b)</b> From Faraday's law $\vec{H}=-\frac{1}{\mu}\!\int\!\nabla\times\vec{E}\,dt$, we obtain:</p>
+          <div class="eq-box rounded-lg p-4 text-lg text-center">
+            $$\vec{H}=\hat{a}_y\,\dfrac{E_0}{\sqrt{\mu_0/\varepsilon_0}}\cos\!\left[10^8\pi\!\left(t-\dfrac{z}{c}\right)+\theta\right]\ \text{A/m}$$
+          </div>
+          <div class="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
+            The ratio $\eta_0 = \sqrt{\mu_0/\varepsilon_0} \approx 377\,\Omega$ is the <span class="text-brand-400 font-semibold">intrinsic impedance of free space</span>, also written as $120\pi\,\Omega$.
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== Visualizer ===== -->
+    <section id="visualizer" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">🌊 Interactive Wave Visualizer</h2>
+      <div class="card rounded-xl p-6">
+        <p class="text-slate-300 mb-5">
+          Drag the sliders to see how <b>frequency</b>, <b>amplitude</b> and <b>phase</b> shape the time-harmonic field:
+          $$E_x(z,t)=E_0\cos(\omega t - kz + \theta)$$
+        </p>
+        <div class="grid md:grid-cols-4 gap-5 mb-5">
+          <label class="text-base">Frequency <span class="text-brand-400">f</span> (MHz)
+            <input id="fr" type="range" min="1" max="300" value="50" class="w-full mt-1">
+            <span id="frv" class="text-brand-400 font-mono text-lg"></span>
+          </label>
+          <label class="text-base">Amplitude <span class="text-brand-400">E₀</span> (V/m)
+            <input id="am" type="range" min="1" max="10" value="5" step="0.1" class="w-full mt-1">
+            <span id="amv" class="text-brand-400 font-mono text-lg"></span>
+          </label>
+          <label class="text-base">Phase <span class="text-brand-400">θ</span> (deg)
+            <input id="ph" type="range" min="-180" max="180" value="0" class="w-full mt-1">
+            <span id="phv" class="text-brand-400 font-mono text-lg"></span>
+          </label>
+          <label class="text-base">Animation
+            <button id="pauseBtn" class="mt-2 w-full bg-brand-500 hover:bg-brand-600 rounded py-2 font-semibold text-white">⏸ Pause</button>
+          </label>
+        </div>
+        <canvas id="waveCanvas" width="900" height="280" class="w-full rounded-lg bg-ink-900/70 border border-white/10"></canvas>
+        <div class="grid md:grid-cols-4 gap-3 mt-4">
+          <div class="rounded-lg bg-white/5 p-3 text-center"><div class="text-xs text-slate-400">Angular freq.</div>ω = <span id="omg" class="text-brand-400 font-mono"></span> rad/s</div>
+          <div class="rounded-lg bg-white/5 p-3 text-center"><div class="text-xs text-slate-400">Wavelength</div>λ = <span id="lam" class="text-brand-400 font-mono"></span></div>
+          <div class="rounded-lg bg-white/5 p-3 text-center"><div class="text-xs text-slate-400">Wavenumber</div>k = <span id="knm" class="text-brand-400 font-mono"></span> rad/m</div>
+          <div class="rounded-lg bg-white/5 p-3 text-center"><div class="text-xs text-slate-400">Period</div>T = <span id="prd" class="text-brand-400 font-mono"></span> ns</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Calculator ===== -->
+    <section id="calculator" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">🧮 EM Wave Calculator</h2>
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="card rounded-xl p-6">
+          <h3 class="font-bold text-lg mb-4">Frequency ↔ Wavelength (Free Space)</h3>
+          <label class="text-base block mb-2">Input frequency</label>
+          <div class="flex gap-2 mb-4">
+            <input id="calcVal" type="number" value="2.4" class="flex-1 bg-ink-800 border border-white/10 rounded px-3 py-2 text-lg">
+            <select id="calcUnit" class="bg-ink-800 border border-white/10 rounded px-3 py-2">
+              <option value="1e9">GHz</option>
+              <option value="1e6">MHz</option>
+              <option value="1e3">kHz</option>
+              <option value="1">Hz</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <div class="rounded-lg bg-white/5 p-3">Wavelength λ = <span id="rLam" class="text-brand-400 font-mono"></span></div>
+            <div class="rounded-lg bg-white/5 p-3">Angular ω = <span id="rOmg" class="text-brand-400 font-mono"></span></div>
+            <div class="rounded-lg bg-white/5 p-3">Wavenumber k = <span id="rK" class="text-brand-400 font-mono"></span></div>
+            <div class="rounded-lg bg-white/5 p-3">Band: <span id="rBand" class="text-amber-300 font-semibold"></span></div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl p-6">
+          <h3 class="font-bold text-lg mb-4">Phasor ↔ Time-domain</h3>
+          <p class="text-sm text-slate-400 mb-4">Enter amplitude, phase & frequency → get both forms.</p>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <label class="text-base">|E| (V/m)<input id="pAmp" type="number" value="10" class="w-full bg-ink-800 border border-white/10 rounded px-2 py-2 mt-1"></label>
+            <label class="text-base">θ (deg)<input id="pPhi" type="number" value="30" class="w-full bg-ink-800 border border-white/10 rounded px-2 py-2 mt-1"></label>
+            <label class="text-base">f (MHz)<input id="pFrq" type="number" value="100" class="w-full bg-ink-800 border border-white/10 rounded px-2 py-2 mt-1"></label>
+            <label class="text-base">Axis
+              <select id="pAx" class="w-full bg-ink-800 border border-white/10 rounded px-2 py-2 mt-1">
+                <option>x</option><option>y</option><option>z</option>
+              </select>
+            </label>
+          </div>
+          <div class="rounded-lg bg-white/5 p-3">
+            <div class="text-slate-400 text-sm mb-1">Phasor form:</div>
+            <div id="pPhasor" class="font-mono text-brand-400 text-lg"></div>
+          </div>
+          <div class="rounded-lg bg-white/5 p-3 mt-2">
+            <div class="text-slate-400 text-sm mb-1">Time-domain:</div>
+            <div id="pTime" class="font-mono text-brand-400 text-lg"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Quiz ===== -->
+    <section id="quiz" class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">📝 Quick Quiz</h2>
+      <p class="text-slate-400 mb-5 text-lg">5 คำถามทดสอบความเข้าใจแบบรวดเร็ว</p>
+      <div id="quizHost" class="space-y-4"></div>
+      <div class="flex gap-3 mt-5 items-center">
+        <button id="gradeBtn" class="bg-brand-500 hover:bg-brand-600 px-6 py-3 rounded-lg font-semibold text-white text-lg">Check Answers</button>
+        <button id="resetBtn" class="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-lg font-semibold text-lg">Reset</button>
+        <div id="score" class="ml-auto text-xl font-bold"></div>
+      </div>
+    </section>
+
+    <!-- ===== ULTIMATE CHEAT SHEET ===== -->
+    <section id="cheat" class="mb-20">
+      <div class="border-t-4 border-brand-500 pt-8">
+        <h2 class="text-4xl md:text-5xl font-black mb-2">📋 Ultimate Cheat Sheet</h2>
+        <p class="text-slate-400 text-lg mb-8">ทุกสมการ + ทุกตัวแปร + เมื่อไหร่จะใช้</p>
+      </div>
+
+      <!-- Part A: All Variables Reference -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🔤 A. Complete Variable Reference</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr>
+                <th>Symbol</th><th>Name</th><th>Unit</th><th>What it means</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>$\vec{E}$</td><td>Electric field</td><td>V/m</td><td>สนามไฟฟ้า — แรงไฟฟ้าต่อประจุทดสอบ</td></tr>
+              <tr><td>$\vec{D}$</td><td>Electric flux density</td><td>C/m²</td><td>ความหนาแน่นฟลักซ์ไฟฟ้า; $\vec{D}=\varepsilon\vec{E}$</td></tr>
+              <tr><td>$\vec{H}$</td><td>Magnetic field</td><td>A/m</td><td>สนามแม่เหล็ก (auxiliary)</td></tr>
+              <tr><td>$\vec{B}$</td><td>Magnetic flux density</td><td>T</td><td>ความหนาแน่นฟลักซ์แม่เหล็ก; $\vec{B}=\mu\vec{H}$</td></tr>
+              <tr><td>$\vec{J}$</td><td>Current density</td><td>A/m²</td><td>ความหนาแน่นกระแส; $\vec{J}=\sigma\vec{E}$</td></tr>
+              <tr><td>$\rho_v$</td><td>Volume charge density</td><td>C/m³</td><td>ประจุต่อหน่วยปริมาตร</td></tr>
+              <tr><td>$\rho_s$</td><td>Surface charge density</td><td>C/m²</td><td>ประจุต่อหน่วยพื้นที่ผิว (ขอบเขต)</td></tr>
+              <tr><td>$\vec{J}_s$</td><td>Surface current density</td><td>A/m</td><td>กระแสต่อหน่วยความยาวผิว</td></tr>
+              <tr><td>$\varepsilon$</td><td>Permittivity</td><td>F/m</td><td>สภาพยอมไฟฟ้า; $\varepsilon=\varepsilon_0\varepsilon_r$</td></tr>
+              <tr><td>$\mu$</td><td>Permeability</td><td>H/m</td><td>สภาพซึมซาบแม่เหล็ก; $\mu=\mu_0\mu_r$</td></tr>
+              <tr><td>$\sigma$</td><td>Conductivity</td><td>S/m</td><td>การนำไฟฟ้า (0=lossless, ∞=PEC)</td></tr>
+              <tr><td>$\omega$</td><td>Angular frequency</td><td>rad/s</td><td>$\omega=2\pi f$</td></tr>
+              <tr><td>$f$</td><td>Frequency</td><td>Hz</td><td>$f=1/T$</td></tr>
+              <tr><td>$\lambda$</td><td>Wavelength</td><td>m</td><td>$\lambda=v/f=2\pi/k$</td></tr>
+              <tr><td>$k$</td><td>Wavenumber</td><td>rad/m</td><td>$k=\omega\sqrt{\mu\varepsilon}$</td></tr>
+              <tr><td>$c$</td><td>Speed of light</td><td>3×10⁸ m/s</td><td>$c=1/\sqrt{\mu_0\varepsilon_0}$</td></tr>
+              <tr><td>$\eta$</td><td>Intrinsic impedance</td><td>Ω</td><td>$\eta=\sqrt{\mu/\varepsilon}$; $\eta_0\approx 377\,\Omega$</td></tr>
+              <tr><td>$\hat{\vec{E}},\hat{\vec{H}}$</td><td>Phasor</td><td>complex</td><td>สนามในโดเมนความถี่ (ไม่มี $t$)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Part B: The Four Equations — With Usage -->
+      <h3 class="text-2xl font-bold mb-4 text-brand-400">📐 B. The Four Maxwell Equations — When &amp; How to Use</h3>
+
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="key-eq">
+          <div class="font-bold text-sky-300 mb-2 mt-2">① Gauss's Law (Electric)</div>
+          <div class="text-center text-2xl my-3">$$\nabla\cdot\vec{D}=\rho_v$$</div>
+          <div class="text-center text-lg my-2">$$\oint_S \vec{D}\cdot d\vec{s}=Q_{enc}$$</div>
+          <div class="bg-white/10 rounded-lg p-3 mt-3">
+            <div class="font-semibold text-amber-300 mb-1">📍 ใช้เมื่อ:</div>
+            <div class="text-sm">หาสนามไฟฟ้าจากประจุที่มีสมมาตร (จุด, เส้น, ผิวระนาบ, ทรงกลม, ทรงกระบอก)</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="font-bold text-sky-300 mb-2 mt-2">② Gauss's Law (Magnetic)</div>
+          <div class="text-center text-2xl my-3">$$\nabla\cdot\vec{B}=0$$</div>
+          <div class="text-center text-lg my-2">$$\oint_S \vec{B}\cdot d\vec{s}=0$$</div>
+          <div class="bg-white/10 rounded-lg p-3 mt-3">
+            <div class="font-semibold text-amber-300 mb-1">📍 ใช้เมื่อ:</div>
+            <div class="text-sm">ยืนยันว่าไม่มี magnetic monopole; ใช้พิสูจน์ $B_{n1}=B_{n2}$ ที่ขอบเขต</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="font-bold text-amber-300 mb-2 mt-2">③ Faraday's Law</div>
+          <div class="text-center text-2xl my-3">$$\nabla\times\vec{E}=-\dfrac{\partial\vec{B}}{\partial t}$$</div>
+          <div class="text-center text-lg my-2">$$\oint_C \vec{E}\cdot d\vec{l}=-\dfrac{\partial\Phi}{\partial t}$$</div>
+          <div class="bg-white/10 rounded-lg p-3 mt-3">
+            <div class="font-semibold text-amber-300 mb-1">📍 ใช้เมื่อ:</div>
+            <div class="text-sm">หา emf เหนี่ยวนำ; เชื่อม $\vec{E}$ ↔ $\vec{H}$ ในสมการคลื่น</div>
+          </div>
+        </div>
+
+        <div class="key-eq">
+          <div class="font-bold text-amber-300 mb-2 mt-2">④ Ampère–Maxwell</div>
+          <div class="text-center text-2xl my-3">$$\nabla\times\vec{H}=\vec{J}+\dfrac{\partial\vec{D}}{\partial t}$$</div>
+          <div class="text-center text-lg my-2">$$\oint_C \vec{H}\cdot d\vec{l}=I_{enc}+\int_S\dfrac{\partial\vec{D}}{\partial t}d\vec{s}$$</div>
+          <div class="bg-white/10 rounded-lg p-3 mt-3">
+            <div class="font-semibold text-amber-300 mb-1">📍 ใช้เมื่อ:</div>
+            <div class="text-sm">หา $\vec{H}$ จากกระแส; สมการคลื่นต้องใช้ $\partial\vec{D}/\partial t$</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part C: Constitutive Relations -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🔗 C. Constitutive Relations (เชื่อมสนาม)</h3>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="eq-box rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">$$\vec{D}=\varepsilon\vec{E}$$</div>
+            <div class="text-sm"><b>เชื่อม $\vec{D}$ กับ $\vec{E}$</b></div>
+            <div class="text-xs text-slate-400 mt-1">ผ่านความเป็นไดอิเล็กตริก</div>
+          </div>
+          <div class="eq-box rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">$$\vec{B}=\mu\vec{H}$$</div>
+            <div class="text-sm"><b>เชื่อม $\vec{B}$ กับ $\vec{H}$</b></div>
+            <div class="text-xs text-slate-400 mt-1">ผ่านความเป็นแม่เหล็ก</div>
+          </div>
+          <div class="eq-box rounded-lg p-4 text-center">
+            <div class="text-2xl mb-2">$$\vec{J}=\sigma\vec{E}$$</div>
+            <div class="text-sm"><b>Ohm's law</b></div>
+            <div class="text-xs text-slate-400 mt-1">ในตัวนำ/เซมิคอนดักเตอร์</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part D: Boundary Conditions -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🚪 D. Boundary Conditions — ใช้ที่รอยต่อตัวกลาง</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr><th>Condition</th><th>Equation</th><th>Meaning &amp; When to Apply</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Normal $\vec{D}$</b></td>
+                <td class="text-xl">$D_{n1}-D_{n2}=\rho_s$</td>
+                <td>ถ้าไม่มีประจุผิว ($\rho_s=0$) → $D_{n1}=D_{n2}$ หรือ $\varepsilon_1 E_{n1}=\varepsilon_2 E_{n2}$</td>
+              </tr>
+              <tr>
+                <td><b>Normal $\vec{B}$</b></td>
+                <td class="text-xl">$B_{n1}=B_{n2}$</td>
+                <td>ต่อเนื่องเสมอ ($\mu_1 H_{n1}=\mu_2 H_{n2}$)</td>
+              </tr>
+              <tr>
+                <td><b>Tangential $\vec{E}$</b></td>
+                <td class="text-xl">$E_{t1}=E_{t2}$</td>
+                <td>ต่อเนื่องเสมอ — ใช้บ่อยที่สุดในการแก้ปัญหาคลื่น</td>
+              </tr>
+              <tr>
+                <td><b>Tangential $\vec{H}$</b></td>
+                <td class="text-xl">$H_{t1}-H_{t2}=J_s$</td>
+                <td>ถ้าไม่มีกระแสผิว ($J_s=0$) → $H_{t1}=H_{t2}$; ที่ PEC: $H_{t1}=J_s$</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Part E: Phasor Rules -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">⚡ E. Phasor Rules — Time ↔ Frequency</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="eq-box rounded-lg p-4">
+            <div class="text-lg mb-2 font-semibold">Time → Phasor:</div>
+            <div class="text-center text-lg">$E_0\cos(\omega t+\theta)\ \to\ E_0 e^{j\theta}$</div>
+          </div>
+          <div class="eq-box rounded-lg p-4">
+            <div class="text-lg mb-2 font-semibold">Phasor → Time:</div>
+            <div class="text-center text-lg">$\vec{E}(t)=\operatorname{Re}[\hat{\vec{E}}e^{j\omega t}]$</div>
+          </div>
+          <div class="eq-box rounded-lg p-4">
+            <div class="text-lg mb-2 font-semibold">Derivative:</div>
+            <div class="text-center text-lg">$\dfrac{\partial}{\partial t}\Rightarrow j\omega$</div>
+          </div>
+          <div class="eq-box rounded-lg p-4">
+            <div class="text-lg mb-2 font-semibold">Integral:</div>
+            <div class="text-center text-lg">$\displaystyle\int dt \Rightarrow \dfrac{1}{j\omega}$</div>
+          </div>
+        </div>
+
+        <h4 class="font-bold mt-6 mb-3 text-lg">Maxwell's Equations in Phasor Form:</h4>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="eq-box rounded-lg p-3 text-center text-lg">$\nabla\cdot\hat{\vec{D}}=\rho_v$</div>
+          <div class="eq-box rounded-lg p-3 text-center text-lg">$\nabla\cdot\hat{\vec{B}}=0$</div>
+          <div class="eq-box rounded-lg p-3 text-center text-lg">$\nabla\times\hat{\vec{E}}=-j\omega\hat{\vec{B}}$</div>
+          <div class="eq-box rounded-lg p-3 text-center text-lg">$\nabla\times\hat{\vec{H}}=\hat{\vec{J}}+j\omega\hat{\vec{D}}$</div>
+        </div>
+      </div>
+
+      <!-- Part F: Wave Equations -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🌊 F. Wave &amp; Helmholtz Equations</h3>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div class="key-eq">
+            <div class="font-semibold text-slate-300 mt-2 mb-2">Time domain (wave eq.)</div>
+            <div class="text-center text-xl my-3">$$\nabla^2\vec{E}=\mu\varepsilon\dfrac{\partial^2\vec{E}}{\partial t^2}$$</div>
+            <div class="text-xs text-slate-400 text-center">และแบบเดียวกันสำหรับ $\vec{H}$</div>
+          </div>
+          <div class="key-eq">
+            <div class="font-semibold text-slate-300 mt-2 mb-2">Frequency domain (Helmholtz)</div>
+            <div class="text-center text-xl my-3">$$\nabla^2\hat{\vec{E}}+k^2\hat{\vec{E}}=0$$</div>
+            <div class="text-xs text-slate-400 text-center">โดย $k=\omega\sqrt{\mu\varepsilon}$</div>
+          </div>
+        </div>
+
+        <h4 class="font-bold mt-5 mb-3 text-lg">Wave Relations:</h4>
+        <div class="grid md:grid-cols-4 gap-3">
+          <div class="eq-box rounded-lg p-3 text-center">
+            <div class="text-lg">$v = \dfrac{1}{\sqrt{\mu\varepsilon}}$</div>
+            <div class="text-xs text-slate-400 mt-1">phase velocity</div>
+          </div>
+          <div class="eq-box rounded-lg p-3 text-center">
+            <div class="text-lg">$\lambda = \dfrac{v}{f} = \dfrac{2\pi}{k}$</div>
+            <div class="text-xs text-slate-400 mt-1">wavelength</div>
+          </div>
+          <div class="eq-box rounded-lg p-3 text-center">
+            <div class="text-lg">$\omega = 2\pi f$</div>
+            <div class="text-xs text-slate-400 mt-1">angular freq.</div>
+          </div>
+          <div class="eq-box rounded-lg p-3 text-center">
+            <div class="text-lg">$\eta = \sqrt{\mu/\varepsilon}$</div>
+            <div class="text-xs text-slate-400 mt-1">impedance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part G: Constants -->
+      <div class="card rounded-xl p-6 mb-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🔢 G. Critical Constants</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="rounded-lg bg-white/5 p-4">
+            <div class="text-sm text-slate-400">Permittivity of free space</div>
+            <div class="text-2xl font-mono text-brand-400 mt-1">$\varepsilon_0 = 8.854\times10^{-12}$ F/m</div>
+          </div>
+          <div class="rounded-lg bg-white/5 p-4">
+            <div class="text-sm text-slate-400">Permeability of free space</div>
+            <div class="text-2xl font-mono text-brand-400 mt-1">$\mu_0 = 4\pi\times10^{-7}$ H/m</div>
+          </div>
+          <div class="rounded-lg bg-white/5 p-4">
+            <div class="text-sm text-slate-400">Speed of light</div>
+            <div class="text-2xl font-mono text-brand-400 mt-1">$c = 3\times10^8$ m/s</div>
+          </div>
+          <div class="rounded-lg bg-white/5 p-4">
+            <div class="text-sm text-slate-400">Free-space impedance</div>
+            <div class="text-2xl font-mono text-brand-400 mt-1">$\eta_0 \approx 377\,\Omega \approx 120\pi\,\Omega$</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part H: Media summary -->
+      <div class="card rounded-xl p-6">
+        <h3 class="text-2xl font-bold mb-4 text-brand-400">🧱 H. Media Classification Summary</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr><th>Medium</th><th>$\sigma$</th><th>$\rho_v$</th><th>$\vec{J}$</th><th>ใช้สมการใด</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Free space</b></td>
+                <td>0</td><td>0</td><td>0</td>
+                <td>Wave equation; $\varepsilon=\varepsilon_0$, $\mu=\mu_0$</td>
+              </tr>
+              <tr>
+                <td><b>Lossless dielectric</b></td>
+                <td>0</td><td>0</td><td>0</td>
+                <td>Wave equation; $\varepsilon=\varepsilon_0\varepsilon_r$, $\mu=\mu_0\mu_r$</td>
+              </tr>
+              <tr>
+                <td><b>Lossy dielectric</b></td>
+                <td>≠0 (small)</td><td>0</td><td>$\sigma\vec{E}$</td>
+                <td>$\sigma\ll\omega\varepsilon$</td>
+              </tr>
+              <tr>
+                <td><b>Good conductor</b></td>
+                <td>large</td><td>0</td><td>$\sigma\vec{E}$</td>
+                <td>$\sigma\gg\omega\varepsilon$</td>
+              </tr>
+              <tr>
+                <td><b>PEC</b></td>
+                <td>$\infty$</td><td>—</td><td>—</td>
+                <td>$\vec{E}=0$, $\vec{D}=0$ ภายใน</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="text-center text-sm text-slate-500 pb-10 pt-4">
+      Interactive notes compiled from 2102221 Engineering Electromagnetics · 2/2025 · Instructor: Budsara Boriboon (BBB)
+    </footer>
+  </main>
+</div>
+
+<script>
+  /* ---------- sidebar toggle (mobile) ---------- */
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  menuBtn?.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+
+  /* ---------- active nav highlighting ---------- */
+  const links = document.querySelectorAll('.nav-link');
+  const sections = [...document.querySelectorAll('main section[id]')];
+  const onScroll = () => {
+    const y = window.scrollY + 120;
+    let current = sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) current = s.id;
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  };
+  window.addEventListener('scroll', onScroll); onScroll();
+
+  /* ---------- Wave Visualizer ---------- */
+  const c   = 3e8;
+  const cv  = document.getElementById('waveCanvas');
+  const ctx = cv.getContext('2d');
+  const fr  = document.getElementById('fr');
+  const am  = document.getElementById('am');
+  const ph  = document.getElementById('ph');
+  const frv = document.getElementById('frv');
+  const amv = document.getElementById('amv');
+  const phv = document.getElementById('phv');
+  const omg = document.getElementById('omg');
+  const lam = document.getElementById('lam');
+  const knm = document.getElementById('knm');
+  const prd = document.getElementById('prd');
+  const pauseBtn = document.getElementById('pauseBtn');
+  let paused = false, t0 = performance.now();
+  pauseBtn.onclick = () => { paused = !paused; pauseBtn.textContent = paused ? '▶ Play' : '⏸ Pause'; };
+
+  function resize() {
+    cv.width = cv.clientWidth * devicePixelRatio;
+    cv.height = cv.clientHeight * devicePixelRatio;
+  }
+  new ResizeObserver(resize).observe(cv); resize();
+
+  function draw(ts) {
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+    for (let i=1;i<10;i++){ const x=W*i/10; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+
+    const f = +fr.value * 1e6;
+    const A = +am.value;
+    const theta = +ph.value * Math.PI/180;
+    const omega = 2*Math.PI*f;
+    const k = omega / c;
+    const wavelength = c / f;
+    const T = 1/f * 1e9;
+
+    frv.textContent = fr.value;
+    amv.textContent = (+am.value).toFixed(1);
+    phv.textContent = ph.value;
+    omg.textContent = omega.toExponential(3);
+    lam.textContent = wavelength >= 1 ? wavelength.toFixed(2) + ' m' : (wavelength*100).toFixed(2) + ' cm';
+    knm.textContent = k.toFixed(3);
+    prd.textContent = T.toFixed(2);
+
+    const t = paused ? 0 : (ts - t0)/1e9 * 4e8;
+    const zmax = 2 * wavelength;
+
+    // E (red)
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.beginPath();
+    for (let px = 0; px <= W; px += 2) {
+      const z = (px/W) * zmax;
+      const v = A * Math.cos(omega*t - k*z + theta);
+      const y = H/2 - (v/10) * (H/2 - 10);
+      if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+
+    // H (blue)
+    ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2.0; ctx.beginPath();
+    for (let px = 0; px <= W; px += 2) {
+      const z = (px/W) * zmax;
+      const v = (A/2.7) * Math.cos(omega*t - k*z + theta);
+      const y = H/2 - (v/10) * (H/2 - 10);
+      if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = '#ef4444'; ctx.font = `${15*devicePixelRatio}px Inter`;
+    ctx.fillText('E-field (V/m)', 10*devicePixelRatio, 22*devicePixelRatio);
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillText('H-field (A/m, scaled)', 10*devicePixelRatio, 44*devicePixelRatio);
+    ctx.fillStyle = 'rgba(255,255,255,.5)';
+    ctx.fillText('→ z (propagation)', W - 170*devicePixelRatio, H/2 - 10);
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  /* ---------- Calculator ---------- */
+  const calcVal  = document.getElementById('calcVal');
+  const calcUnit = document.getElementById('calcUnit');
+  const rLam = document.getElementById('rLam');
+  const rOmg = document.getElementById('rOmg');
+  const rK   = document.getElementById('rK');
+  const rBand= document.getElementById('rBand');
+
+  function classifyBand(f) {
+    if (f < 3e3)    return 'Sub-ELF';
+    if (f < 3e6)    return 'Radio (kHz)';
+    if (f < 3e9)    return 'Radio/Microwave';
+    if (f < 3e11)   return 'Microwave';
+    if (f < 4e14)   return 'Infrared';
+    if (f < 7.5e14) return 'Visible light';
+    if (f < 3e16)   return 'Ultraviolet';
+    if (f < 3e19)   return 'X-rays';
+    return 'Gamma rays';
+  }
+  function updateCalc() {
+    const f = (+calcVal.value) * (+calcUnit.value);
+    if (!isFinite(f) || f <= 0) { rLam.textContent='—'; rOmg.textContent='—'; rK.textContent='—'; rBand.textContent='—'; return; }
+    const lam = c/f;
+    const om  = 2*Math.PI*f;
+    const k   = om/c;
+    rLam.textContent = lam >= 1 ? lam.toExponential(3) + ' m' : (lam*1000).toExponential(3) + ' mm';
+    rOmg.textContent = om.toExponential(3) + ' rad/s';
+    rK.textContent   = k.toExponential(3)  + ' rad/m';
+    rBand.textContent= classifyBand(f);
+  }
+  calcVal.addEventListener('input', updateCalc);
+  calcUnit.addEventListener('change', updateCalc);
+  updateCalc();
+
+  /* ---------- Phasor calc ---------- */
+  const pAmp = document.getElementById('pAmp');
+  const pPhi = document.getElementById('pPhi');
+  const pFrq = document.getElementById('pFrq');
+  const pAx  = document.getElementById('pAx');
+  const pPhasor = document.getElementById('pPhasor');
+  const pTime   = document.getElementById('pTime');
+  function updatePhasor() {
+    const A = +pAmp.value, th = +pPhi.value, f = +pFrq.value * 1e6;
+    const om = (2*Math.PI*f).toExponential(3);
+    pPhasor.textContent = `Ê = a_${pAx.value} · ${A} ∠ ${th}°  V/m`;
+    pTime.textContent   = `E(t) = a_${pAx.value} · ${A} cos(${om} t + ${th}°)  V/m`;
+  }
+  [pAmp,pPhi,pFrq,pAx].forEach(el => el.addEventListener('input', updatePhasor));
+  updatePhasor();
+
+  /* ---------- Quiz ---------- */
+  const questions = [
+    {
+      q: "Which Maxwell equation contains the displacement current term?",
+      opts: ["Gauss's law (electric)", "Gauss's law (magnetic)", "Faraday's law", "Ampère–Maxwell"],
+      a: 3,
+      why: "Maxwell added ∂D/∂t to Ampère's law to satisfy the continuity equation ∇·J = −∂ρ_v/∂t."
+    },
+    {
+      q: "In the phasor domain, the time derivative ∂/∂t is replaced by:",
+      opts: ["jω", "1/(jω)", "ω²", "−ω"],
+      a: 0,
+      why: "Because ∂/∂t of e^{jωt} equals jω · e^{jωt}."
+    },
+    {
+      q: "The wave equation in a simple, source-free, lossless medium is:",
+      opts: ["∇²E = με ∂²E/∂t²", "∇·E = 0", "∇×E = ρ_v", "∇²E = 0"],
+      a: 0,
+      why: "Derived by taking the curl of Faraday's law and applying ∇·E = 0."
+    },
+    {
+      q: "Tangential electric field at a lossless dielectric boundary:",
+      opts: ["Is always zero", "Jumps by ρ_s", "Is continuous: E_t1 = E_t2", "Depends on frequency"],
+      a: 2,
+      why: "Faraday's law applied to a vanishing rectangular loop gives E_t1 = E_t2."
+    },
+    {
+      q: "The intrinsic impedance of free space η₀ = √(μ₀/ε₀) ≈",
+      opts: ["50 Ω", "120π Ω ≈ 377 Ω", "75 Ω", "3×10⁸ Ω"],
+      a: 1,
+      why: "η₀ ≈ 376.73 Ω, often written as 120π Ω."
+    }
+  ];
+
+  const host = document.getElementById('quizHost');
+  function renderQuiz() {
+    host.innerHTML = '';
+    questions.forEach((q, qi) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'card rounded-xl p-5';
+      wrap.innerHTML = `
+        <div class="flex items-start gap-2 mb-4">
+          <span class="chip px-3 py-1 rounded-full text-sm font-semibold">Q${qi+1}</span>
+          <span class="font-medium text-lg">${q.q}</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-2" data-q="${qi}">
+          ${q.opts.map((o,oi)=>`
+            <button data-opt="${oi}" class="quiz-opt text-left border border-white/10 rounded-lg px-4 py-3 text-base">
+              <span class="inline-block w-6 text-slate-400">${String.fromCharCode(65+oi)}.</span> ${o}
+            </button>
+          `).join('')}
+        </div>
+        <div class="mt-3 hidden text-base text-slate-400" data-why="${qi}">💡 ${q.why}</div>
+      `;
+      host.appendChild(wrap);
+    });
+
+    host.querySelectorAll('.quiz-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const grp = btn.parentElement;
+        grp.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('ring-2','ring-brand-500'));
+        btn.classList.add('ring-2','ring-brand-500');
+        btn.dataset.selected = '1';
+        grp.dataset.picked = btn.dataset.opt;
+      });
+    });
+  }
+  renderQuiz();
+
+  document.getElementById('gradeBtn').addEventListener('click', () => {
+    let correct = 0;
+    questions.forEach((q, qi) => {
+      const grp = host.querySelector(`[data-q="${qi}"]`);
+      const picked = grp?.dataset.picked;
+      const why = host.querySelector(`[data-why="${qi}"]`);
+      grp.querySelectorAll('.quiz-opt').forEach(b => {
+        b.classList.remove('correct','wrong');
+        if (+b.dataset.opt === q.a) b.classList.add('correct');
+        else if (picked !== undefined && +b.dataset.opt === +picked) b.classList.add('wrong');
+      });
+      if (picked !== undefined && +picked === q.a) correct++;
+      why.classList.remove('hidden');
+    });
+    const s = document.getElementById('score');
+    const pct = Math.round(correct/questions.length*100);
+    s.textContent = `Score: ${correct}/${questions.length} (${pct}%)`;
+    s.className = 'ml-auto text-xl font-bold ' +
+                  (pct>=80?'text-green-400':pct>=50?'text-amber-400':'text-rose-400');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    renderQuiz();
+    document.getElementById('score').textContent = '';
+  });
+</script>
+</body>
+</html>
